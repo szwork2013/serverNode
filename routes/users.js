@@ -150,8 +150,8 @@ exports.delete = function(req,res){
         if(user != null) {
             return user.remove(function (err) {
                 if (!err) {
-                    console.log("removed");
-                    return res.send(user);
+                    console.log("user removed");
+                    return res.status(200).send("L'utilisateur " + user.username + " a bien été supprimé.");
                 } else {
                     console.log(err);
                 }
@@ -194,10 +194,10 @@ exports.update = function(req, res){
             return user.save(function (err) {
                 if (!err) {
                     console.log("updated");
+                    return res.status(200).send("L'utilisateur " + user.username + " a bien été mis à jour.");
                 } else {
                     console.log(err);
                 }
-                return res.send(user);
             });
         }
     });
