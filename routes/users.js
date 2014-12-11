@@ -9,23 +9,20 @@ exports.login = function(req, res) {
 	var password = req.body.password || '';
 	
 	if (username == '' || password == '') { 
-		return res.send(401); 
+		return res.status(401).send("Le password ou le login est vide.");
 	}
 
     User.findOne({username: username}, function (err, user) {
-		if (err) {
-			console.log(err);
-			return res.send(401);
-		}
 
-		if (user == undefined) {
-			return res.send(401);
-		}
+        if (err)
+            return res.status(401).send("Une erreur s'est produite durant l'authentification.");
+        else if (!user)
+            return res.status(401).send("L'utilisateur n'a pas été trouvé.");
 		
 		user.comparePassword(password, function(isMatch) {
 			if (!isMatch) {
 				console.log("Attempt failed to login with " + user.username);
-				return res.send(401);
+                return res.status(401).send("Le mot de passe ou le login est erroné.");
             }
 
 			var token = jwt.sign({id: user._id}, secret.secretToken, { expiresInMinutes: tokenManager.TOKEN_EXPIRATION });
@@ -100,7 +97,7 @@ exports.add = function(req, res) {
     var mail = req.body.user.mail || '';
 
     if (username == '' || password == '' || password != passwordConfirmation) {
-        return res.send(400);
+        return res.status(400).send("Le formulaire à mal été rempli.");
     }
 
     var user = new User();
@@ -111,10 +108,8 @@ exports.add = function(req, res) {
     user.mail = mail;
 
     user.save(function(err) {
-        if (err) {
-            console.log(err);
-            return res.send(500);
-        }
+        if (err)
+            return res.status(500).send("Une erreur s'est produite durant l'ajout d'un utilisateur.");
 
         User.count(function(err, counter) {
             if (err) {
@@ -125,16 +120,16 @@ exports.add = function(req, res) {
             if (counter == 1) {
                 User.update({username:user.username}, {is_admin:true}, function(err, nbRow) {
                     if (err) {
-                        console.log(err);
+
                         return res.send(500);
                     }
 
                     console.log('First user created as an Admin');
-                    return res.send(200);
+                    return res.status(200).send("L'utilisateur " + user.username + " a bien été ajouté. Il est administrateur.");
                 });
             }
             else {
-                return res.send(200);
+                return res.status(200).send("L'utilisateur " + user.username + " a bien été ajouté.");
             }
         });
     });
@@ -214,7 +209,7 @@ exports.addNotification = function(req, res){
     console.log(req.body);
     var type = req.body.notification.type || '';
     var message = req.body.notification.message || '';
-    var userId = req.params.idUser;
+    var userId = req.params.id;
 
     if (type == '' || message == '' || userId == '') {
         return res.send(400);
@@ -242,6 +237,43 @@ exports.addNotification = function(req, res){
                 }
                 return res.send(user);
             });
+        }
+    });
+};
+
+exports.deleteNotification = function(req, res){
+
+    console.log("/// REMOVE NOTIF ///");
+    console.log(req.params.userId);
+    console.log(req.params.notificationId);
+
+    User.findById(req.params.userId, function (err, user) {
+        if (err) {
+            console.log(err);
+            return res.send(500);
+        }
+        if(user != null) {
+
+            var notification = user.notifications.id(req.params.notificationId);
+
+            if(notification != null) {
+                user.notifications.id(notification._id).remove(function (err) {
+                    if (!err) {
+
+                        user.save(function (err) {
+                            if (!err) {
+                                console.log("Notification removed");
+                            } else {
+                                console.log(err);
+                            }
+                        });
+
+                        return res.send(user);
+                    } else {
+                        console.log(err);
+                    }
+                });
+            }
         }
     });
 };

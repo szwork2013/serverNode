@@ -48,12 +48,12 @@ router.get('/', routes.index.index);
 // =============================================================================
 
 router.post('/users', routes.users.add);
-router.get('/users', routes.users.list);
+router.get('/users', jwt({secret: secret.secretToken}), routes.users.list);
 router.delete('/users/:id', routes.users.delete);
 router.put('/users/:id', routes.users.update);
 
-router.put('/users/:idUser/notifications', routes.users.addNotification);
-/*router.delete('/users/:idUser/notifications/:idNotification', routes.users.deleteNotification);*/
+router.put('/users/:id/notifications', routes.users.addNotification);
+router.delete('/users/:userId/notifications/:notificationId', routes.users.deleteNotification);
 
 // ROUTES AUTH
 // =============================================================================
