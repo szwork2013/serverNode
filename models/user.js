@@ -8,9 +8,16 @@ var UserSchema = new Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     is_admin: { type: Boolean, default: false },
-    created: { type: Date, default: Date.now }
+    mail: { type: String, default: '' },
+    firstName: { type: String, default: '' },
+    lastName: { type: String, default: '' },
+    created: { type: Date, default: Date.now },
+    notifications: [{
+        type: { type: String, required: true},
+        message: { type: String, required: true },
+        created: { type: Date, default: Date.now }
+    }]
 });
-
 
 // Bcrypt middleware on UserSchema
 UserSchema.pre('save', function(next) {

@@ -44,6 +44,17 @@ router.use(function(req, res, next) {
 
 router.get('/', routes.index.index);
 
+// ROUTES USERS
+// =============================================================================
+
+router.post('/users', routes.users.add);
+router.get('/users', routes.users.list);
+router.delete('/users/:id', routes.users.delete);
+router.put('/users/:id', routes.users.update);
+
+router.put('/users/:idUser/notifications', routes.users.addNotification);
+/*router.delete('/users/:idUser/notifications/:idNotification', routes.users.deleteNotification);*/
+
 // ROUTES AUTH
 // =============================================================================
 
