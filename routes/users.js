@@ -203,6 +203,19 @@ exports.update = function(req, res){
     });
 };
 
+
+exports.one =  function(req, res){
+    User.findById(req.params.id, function (err, user) {
+        if (err) {
+            console.log(err);
+            return res.send(500);
+        }
+        if(user != null) {
+            return res.status(200).send(user);
+        }
+    });
+};
+
 exports.addNotification = function(req, res){
 
     console.log("/// ADD NOTIF ///");

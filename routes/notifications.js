@@ -1,4 +1,4 @@
-var Notification = require('../models/bear');
+var Notification = require('../models/project');
 
 exports.listByUserId = function(req, res){
     Notification.find(req.params.id, function(err, notifications) {

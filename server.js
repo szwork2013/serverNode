@@ -15,7 +15,7 @@ var secret = require('./config/secret');
 
 var routes = {};
 routes.users = require('./routes/users');
-routes.bears = require('./routes/bears');
+routes.projects = require('./routes/projects');
 routes.index = require('./routes/index');
 
 app.use(morgan('dev'));
@@ -44,11 +44,24 @@ router.use(function(req, res, next) {
 
 router.get('/', routes.index.index);
 
+// ROUTES PROJECTS
+// =============================================================================
+
+/*
+router.post('/projects', jwt({secret: secret.secretToken}), routes.projects.add);
+router.get('/projects', jwt({secret: secret.secretToken}), routes.projects.list);
+router.get('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.one);
+router.delete('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.delete);
+router.put('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.update);
+*/
+
+
 // ROUTES USERS
 // =============================================================================
 
 router.post('/users', routes.users.add);
 router.get('/users', jwt({secret: secret.secretToken}), routes.users.list);
+router.get('/users/:id', routes.users.one);
 router.delete('/users/:id', routes.users.delete);
 router.put('/users/:id', routes.users.update);
 
@@ -61,15 +74,6 @@ router.delete('/users/:userId/notifications/:notificationId', routes.users.delet
 router.post('/user/register', routes.users.register);
 router.post('/user/login', routes.users.login);
 router.get('/user/logout', jwt({secret: secret.secretToken}), routes.users.logout);
-
-// ROUTES BEARS
-// =============================================================================
-
-router.get('/bears', routes.bears.list);
-router.get('/bears/:id', routes.bears.one);
-router.post('/bears', routes.bears.create);
-router.delete('/bears/:id', routes.bears.delete);
-router.put('/bears/:id', routes.bears.update);
 
 // START THE SERVER
 // =============================================================================
