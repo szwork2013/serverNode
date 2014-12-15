@@ -25,7 +25,7 @@ exports.create = function (req, res) {
 
 exports.update = function(req, res){
 
-    User.find({"right._id": req.params.id}, function(err, users) {
+/*    User.find({"right._id": req.params.id}, function(err, users) {
 
         if (err) {
             return res.status(400).send(err);
@@ -33,7 +33,7 @@ exports.update = function(req, res){
 
             if(users.length > 0) {
                 return res.status(409).send("Ce droit est attribué a des utilisateurs et ne peut être supprimé.");
-            } else {
+            } else {*/
                 console.log("Request body update right : " + req.body);
                 var name = req.body.right.name || '';
 
@@ -81,10 +81,10 @@ exports.update = function(req, res){
                         return res.send(500);
                     }
                 });
-            }
+/*            }
         }
 
-    });
+    });*/
 };
 
 exports.delete = function(req, res){
