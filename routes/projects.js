@@ -18,3 +18,40 @@ exports.one = function(req, res){
         }
     });
 };
+
+
+exports.create = function(req, res){
+
+    console.log(req.body.project);
+    console.log(req.body.resources);
+    var name = req.body.project.name || '';
+    var duration = req.body.project.duration || 0;
+    var begin = req.body.project.begin || '';
+    var end = req.body.project.end || '';
+    var resources = req.body.resources;
+
+   if (name == '' || begin == '') {
+       return res.status(400).send("Objet projet mal formé.");
+    }
+
+    var project = new Project();
+    project.name = name;
+    project.duration = duration;
+    project.begin = begin;
+    project.end = end;
+
+    for(var resource in resources){
+        project.resources.push(resources[resource]);
+    }
+
+    project.save(function(err) {
+        if (err) {
+            console.log(err);
+            return res.send(500);
+        } else {
+            console.log("project created")
+        }
+
+        return res.send(project);
+    });
+};

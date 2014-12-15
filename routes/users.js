@@ -12,7 +12,7 @@ exports.login = function(req, res) {
 		return res.status(401).send("Le password ou le login est vide.");
 	}
 
-    User.findOne({username: username}, function (err, user) {
+    User.findOne({username: username, active: true}, function (err, user) {
 
         if (err)
             return res.status(401).send("Une erreur s'est produite durant l'authentification.");
@@ -45,6 +45,7 @@ exports.logout = function(req, res) {
 	}
 };
 
+// DEPRECATED
 exports.register = function(req, res) {
 	var username = req.body.username || '';
 	var password = req.body.password || '';
@@ -88,17 +89,23 @@ exports.register = function(req, res) {
 	});
 };
 
-exports.add = function(req, res) {
+exports.create = function(req, res) {
     var username = req.body.user.username || '';
     var password = req.body.user.password || '';
     var passwordConfirmation = req.body.user.passwordConfirmation || '';
     var firstName = req.body.user.firstName || '';
     var lastName = req.body.user.lastName || '';
     var mail = req.body.user.mail || '';
+    var right = req.body.user.right || '';
+    var roles = req.body.user.roles;
 
-    if (username == '' || password == '' || password != passwordConfirmation) {
+    var active = req.body.user.active;
+
+    if (right == '' || username == '' || password == '' || password != passwordConfirmation) {
         return res.status(400).send("Le formulaire à mal été rempli.");
     }
+
+    console.log(active);
 
     var user = new User();
     user.username = username;
@@ -106,32 +113,16 @@ exports.add = function(req, res) {
     user.firstName = firstName;
     user.lastName = lastName;
     user.mail = mail;
+    user.right = right;
+    user.roles = roles;
+    user.active = active;
 
     user.save(function(err) {
-        if (err)
+        if (err) {
             return res.status(500).send("Une erreur s'est produite durant l'ajout d'un utilisateur.");
-
-        User.count(function(err, counter) {
-            if (err) {
-                console.log(err);
-                return res.send(500);
-            }
-
-            if (counter == 1) {
-                User.update({username:user.username}, {is_admin:true}, function(err, nbRow) {
-                    if (err) {
-
-                        return res.send(500);
-                    }
-
-                    console.log('First user created as an Admin');
-                    return res.status(200).send("L'utilisateur " + user.username + " a bien été ajouté. Il est administrateur.");
-                });
-            }
-            else {
-                return res.status(200).send("L'utilisateur " + user.username + " a bien été ajouté.");
-            }
-        });
+        } else {
+            return res.status(200).send("L'utilisateur " + user.username + " a bien été ajouté.");
+        }
     });
 };
 
@@ -150,10 +141,10 @@ exports.delete = function(req,res){
         if(user != null) {
             return user.remove(function (err) {
                 if (!err) {
-                    console.log("user removed");
+                    console.log("removed");
                     return res.status(200).send("L'utilisateur " + user.username + " a bien été supprimé.");
                 } else {
-                    console.log(err);
+                    return res.status(500).send("Une erreur s'est produite durant la suppression d'un utilisateur.");
                 }
             });
         }
@@ -162,7 +153,7 @@ exports.delete = function(req,res){
 
 exports.update = function(req, res){
 
-    console.log("/// UPDATE ///");
+    console.log("/// UPDATE USER///");
     console.log(req.body.user);
     var username = req.body.user.username || '';
     var password = req.body.user.password || '';
@@ -171,6 +162,9 @@ exports.update = function(req, res){
     var lastName = req.body.user.lastName || '';
     var mail = req.body.user.mail || '';
     var notifications = req.body.user.notifications || null;
+    var right = req.body.user.right || '';
+    var roles = req.body.user.roles;
+    var active = req.body.user.active;
 
     if (username == '' || password == '' || password != passwordConfirmation) {
         return res.send(400);
@@ -190,6 +184,9 @@ exports.update = function(req, res){
             user.lastName = lastName;
             user.mail = mail;
             user.notifications = notifications;
+            user.right = right;
+            user.roles = roles;
+            user.active = active;
 
             return user.save(function (err) {
                 if (!err) {
@@ -202,7 +199,6 @@ exports.update = function(req, res){
         }
     });
 };
-
 
 exports.one =  function(req, res){
     User.findById(req.params.id, function (err, user) {
@@ -292,7 +288,7 @@ exports.deleteNotification = function(req, res){
 };
 
 exports.list = function(req, res){
-    User.find(function(err, users) {
+    User.find( function(err, users) {
         if (err)
             res.send(err);
 

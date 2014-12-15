@@ -7,7 +7,20 @@ var SALT_WORK_FACTOR = 10;
 var UserSchema = new Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    is_admin: { type: Boolean, default: false },
+    right: {
+        _id: {type: Schema.ObjectId, ref: 'RightsSchema', required: true},
+        name: {type: String, required: true}
+    },
+    roles: [{
+        role: {
+            _id: {type: Schema.ObjectId, ref: 'RoleSchema', required: true},
+            name: {type: String, required: true}
+        },
+        project: {
+            _id: {type: Schema.ObjectId, ref: 'ProjectSchema', required: true},
+            name: {type: String, required: true}
+        }
+    }],
     mail: { type: String, default: '' },
     firstName: { type: String, default: '' },
     lastName: { type: String, default: '' },
@@ -16,13 +29,14 @@ var UserSchema = new Schema({
         type: { type: String, required: true},
         message: { type: String, required: true },
         created: { type: Date, default: Date.now }
-    }]
+    }],
+    active: {type: Boolean, default: true}
 });
 
 // Bcrypt middleware on UserSchema
 UserSchema.pre('save', function(next) {
     var user = this;
-
+    console.log("presave");
     if (!user.isModified('password')) return next();
 
     bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {

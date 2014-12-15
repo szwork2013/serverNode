@@ -1,16 +1,14 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+
 var ProjectSchema = new Schema({
     name: { type: String, required: true, unique: true },
-    begin: { type: Date },
+    duration: { type: Number },
+    begin: { type: Date, required: true },
     end: { type: Date },
-    created: { type: Date, default: Date.now },
-    tasks: [{
-        type: { type: String, required: true},
-        message: { type: String, required: true },
-        created: { type: Date, default: Date.now }
-    }]
+    created: { type: Date, default: Date.now }
+/*    resources : [{type: Schema.ObjectId, ref: 'ProjectSchema', required: true}]*/
 });
 
 module.exports = mongoose.model('Project', ProjectSchema);

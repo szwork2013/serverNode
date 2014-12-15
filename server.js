@@ -17,6 +17,8 @@ var routes = {};
 routes.users = require('./routes/users');
 routes.projects = require('./routes/projects');
 routes.index = require('./routes/index');
+routes.rights = require('./routes/rights');
+routes.roles = require('./routes/roles');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,7 +35,6 @@ mongoose.connect("mongodb://localhost:27017/testNode");
 var router = express.Router();
 
 router.use(function(req, res, next) {
-    console.log('Something is happening.');
     res.set('Access-Control-Allow-Origin', '*');
     res.set('Access-Control-Allow-Credentials', true);
     res.set('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT');
@@ -44,22 +45,34 @@ router.use(function(req, res, next) {
 
 router.get('/', routes.index.index);
 
+// ROUTES ROLES
+// =============================================================================
+
+router.get('/roles', routes.roles.list);
+router.post('/roles', routes.roles.create);
+
+// ROUTES RIGHTS
+// =============================================================================
+
+router.get('/rights', routes.rights.list);
+router.post('/rights', routes.rights.create);
+router.put('/rights/:id', routes.rights.update);
+router.delete('/rights/:id', routes.rights.delete);
+
 // ROUTES PROJECTS
 // =============================================================================
 
-/*
-router.post('/projects', jwt({secret: secret.secretToken}), routes.projects.add);
-router.get('/projects', jwt({secret: secret.secretToken}), routes.projects.list);
+router.post('/projects', routes.projects.create);
+/*router.get('/projects', jwt({secret: secret.secretToken}), routes.projects.list);
 router.get('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.one);
 router.delete('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.delete);
 router.put('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.update);
 */
 
-
 // ROUTES USERS
 // =============================================================================
 
-router.post('/users', routes.users.add);
+router.post('/users', routes.users.create);
 router.get('/users', jwt({secret: secret.secretToken}), routes.users.list);
 router.get('/users/:id', routes.users.one);
 router.delete('/users/:id', routes.users.delete);
@@ -71,9 +84,9 @@ router.delete('/users/:userId/notifications/:notificationId', routes.users.delet
 // ROUTES AUTH
 // =============================================================================
 
-router.post('/user/register', routes.users.register);
-router.post('/user/login', routes.users.login);
-router.get('/user/logout', jwt({secret: secret.secretToken}), routes.users.logout);
+router.post('/auth/register', routes.users.register);
+router.post('/auth/login', routes.users.login);
+router.get('/auth/logout', jwt({secret: secret.secretToken}), routes.users.logout);
 
 // START THE SERVER
 // =============================================================================
