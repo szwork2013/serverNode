@@ -8,7 +8,7 @@ var UserSchema = new Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     right: {
-        _id: {type: Schema.ObjectId, ref: 'RightsSchema', required: true},
+        _id: {type: Schema.ObjectId, ref: 'RightSchema', required: true},
         name: {type: String, required: true}
     },
     roles: [{
