@@ -98,14 +98,11 @@ exports.create = function(req, res) {
     var mail = req.body.user.mail || '';
     var right = req.body.user.right || '';
     var roles = req.body.user.roles;
-
     var active = req.body.user.active;
 
-    if (right == '' || username == '' || password == '' || password != passwordConfirmation) {
+    if (active == '' || roles == '' || right == '' || username == '' || password == '' || password != passwordConfirmation) {
         return res.status(400).send("Le formulaire à mal été rempli.");
     }
-
-    console.log(active);
 
     var user = new User();
     user.username = username;
@@ -119,6 +116,7 @@ exports.create = function(req, res) {
 
     user.save(function(err) {
         if (err) {
+            console.log(err);
             return res.status(500).send("Une erreur s'est produite durant l'ajout d'un utilisateur.");
         } else {
             return res.status(200).send("L'utilisateur " + user.username + " a bien été ajouté.");
@@ -126,16 +124,13 @@ exports.create = function(req, res) {
     });
 };
 
-exports.delete = function(req,res){
-
-    console.log("/// DELETE ///");
-    console.log(req.params.id);
+exports.delete = function(req, res){
 
     User.findById(req.params.id, function (err, user) {
 
         if (err) {
             console.log(err);
-            return res.send(500);
+            return res.send(500).send("Une erreur s'est produite durant la suppression de l'utilisateur.");
         }
 
         if(user != null) {
@@ -153,8 +148,6 @@ exports.delete = function(req,res){
 
 exports.update = function(req, res){
 
-    console.log("/// UPDATE USER///");
-    console.log(req.body.user);
     var username = req.body.user.username || '';
     var password = req.body.user.password || '';
     var passwordConfirmation = req.body.user.passwordConfirmation || '';
@@ -174,7 +167,7 @@ exports.update = function(req, res){
 
         if (err) {
             console.log(err);
-            return res.send(500);
+            return res.status(500);
         }
 
         if(user != null) {
@@ -193,7 +186,7 @@ exports.update = function(req, res){
                     console.log("updated");
                     return res.status(200).send("L'utilisateur " + user.username + " a bien été mis à jour.");
                 } else {
-                    console.log(err);
+                    return res.status(500).send("Une erreur s'est produite durant la modification d'un utilisateur.");
                 }
             });
         }
@@ -214,8 +207,6 @@ exports.one =  function(req, res){
 
 exports.addNotification = function(req, res){
 
-    console.log("/// ADD NOTIF ///");
-    console.log(req.body);
     var type = req.body.notification.type || '';
     var message = req.body.notification.message || '';
     var userId = req.params.id;
@@ -240,7 +231,7 @@ exports.addNotification = function(req, res){
 
             return user.save(function (err) {
                 if (!err) {
-                    console.log("notification added");
+                    console.log("Notification added");
                 } else {
                     console.log(err);
                 }
@@ -251,10 +242,6 @@ exports.addNotification = function(req, res){
 };
 
 exports.deleteNotification = function(req, res){
-
-    console.log("/// REMOVE NOTIF ///");
-    console.log(req.params.userId);
-    console.log(req.params.notificationId);
 
     User.findById(req.params.userId, function (err, user) {
         if (err) {
@@ -289,8 +276,10 @@ exports.deleteNotification = function(req, res){
 
 exports.list = function(req, res){
     User.find( function(err, users) {
-        if (err)
+        if (err) {
+            console.log(err);
             res.send(err);
+        }
 
         res.json(users);
     });

@@ -11,38 +11,44 @@ var UserSchema = new Schema({
         _id: {type: Schema.ObjectId, ref: 'RightSchema', required: true},
         name: {type: String, required: true}
     },
-    roles: [{
-        role: {
-            _id: {type: Schema.ObjectId, ref: 'RoleSchema', required: true},
-            name: {type: String, required: true}
-        },
-        project: {
-            _id: {type: Schema.ObjectId, ref: 'ProjectSchema', required: true},
-            name: {type: String, required: true}
+    roles: [
+        {
+            role: {
+                _id: {type: Schema.ObjectId, ref: 'RoleSchema', required: true},
+                name: {type: String, required: true}
+            },
+            project: {
+                _id: {type: Schema.ObjectId, ref: 'ProjectSchema', required: true},
+                name: {type: String, required: true}
+            }
         }
-    }],
+    ],
     mail: { type: String, default: '' },
     firstName: { type: String, default: '' },
     lastName: { type: String, default: '' },
+    notifications: [
+        {
+            type: { type: String, required: true},
+            message: { type: String, required: true },
+            created: { type: Date, default: Date.now }
+        }
+    ],
+    active: {type: Boolean, default: true},
+
     created: { type: Date, default: Date.now },
-    notifications: [{
-        type: { type: String, required: true},
-        message: { type: String, required: true },
-        created: { type: Date, default: Date.now }
-    }],
-    active: {type: Boolean, default: true}
+    modified: { type: Date, default: Date.now }
 });
 
 // Bcrypt middleware on UserSchema
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function (next) {
     var user = this;
     console.log("presave");
     if (!user.isModified('password')) return next();
 
-    bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+    bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
         if (err) return next(err);
 
-        bcrypt.hash(user.password, salt ,null, function(err, hash) {
+        bcrypt.hash(user.password, salt, null, function (err, hash) {
             if (err) return next(err);
             user.password = hash;
             next();
@@ -51,8 +57,8 @@ UserSchema.pre('save', function(next) {
 });
 
 //Password verification
-UserSchema.methods.comparePassword = function(password, cb) {
-    bcrypt.compare(password, this.password, function(err, isMatch) {
+UserSchema.methods.comparePassword = function (password, cb) {
+    bcrypt.compare(password, this.password, function (err, isMatch) {
         if (err) return cb(err);
         cb(isMatch);
     });

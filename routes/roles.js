@@ -2,7 +2,6 @@ var Role = require('../models/role');
 
 exports.create = function (req, res) {
 
-    console.log(req.body);
     var name = req.body.name || '';
 
     if (name == '') {
@@ -27,7 +26,7 @@ exports.create = function (req, res) {
 exports.list = function(req, res){
     User.find( function(err, roles) {
         if (err)
-            res.status(400).send(err);
+            res.status(500).send(err);
 
         res.json(roles);
     });
