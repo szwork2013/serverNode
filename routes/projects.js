@@ -3,9 +3,9 @@ var Project = require('../models/project');
 exports.list = function(req, res){
     Project.find(function(err, projects) {
         if (err)
-            res.send(err);
+            return res.status(500).send(err);
 
-        res.json(projects);
+        return res.status(200).send(projects);
     });
 };
 
@@ -14,11 +14,11 @@ exports.one = function(req, res){
         if (!err) {
             return res.send(project);
         } else {
-            return console.log(err);
+            console.log(err);
+            return res.status(500).send(err);
         }
     });
 };
-
 
 exports.create = function(req, res){
 
@@ -51,7 +51,6 @@ exports.create = function(req, res){
         } else {
             console.log("project created")
         }
-
-        return res.send(project);
+        return res.status(200).send(project);
     });
 };

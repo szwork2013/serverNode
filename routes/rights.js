@@ -15,7 +15,7 @@ exports.create = function (req, res) {
     right.save(function (err) {
         if (err) {
             console.log(err);
-            return res.send(500);
+            return res.status(500).send(err);
         } else {
             console.log("right created")
         }
@@ -45,9 +45,9 @@ exports.update = function(req, res){
 
                     if (err) {
                         console.log(err);
-                        return res.send(500);
+                        return res.status(500).send(err);
                     }
-                    console.log(right);
+
                     if(right != null) {
                         right.name = name;
 
@@ -57,16 +57,13 @@ exports.update = function(req, res){
                                 User.find({"right._id": req.params.id}, function(err, users) {
 
                                     if (err) {
-                                        return res.status(400).send(err);
+                                        return res.status(500).send(err);
                                     } else {
                                         for(var u in users){
                                             users[u].right = right;
                                             users[u].save(function (err) {
-                                                if (!err) {
-                                                    console.log("Right updated on :" + users[u].username);
-                                                } else {
+                                                if (err)
                                                     console.log(err);
-                                                }
                                             });
                                         }
                                     }
@@ -75,10 +72,12 @@ exports.update = function(req, res){
                                 });
                             } else {
                                 console.log(err);
+                                return res.status(500).send(err);
                             }
                         });
                     } else {
-                        return res.send(500);
+                        console.log(err);
+                        return res.status(500).send(err);
                     }
                 });
 /*            }
@@ -92,6 +91,7 @@ exports.delete = function(req, res){
     User.find({"right._id": req.params.id}, function(err, users) {
 
         if (err) {
+            console.log(err);
             return res.status(400).send(err);
         } else {
 
@@ -102,15 +102,13 @@ exports.delete = function(req, res){
 
                     if (err) {
                         console.log(err);
-                        return res.send(500);
+                        return res.status(500).send(err);
                     }
 
-                    console.log(req.params.id);
                     if(right != null) {
 
                         return right.remove(function (err) {
                             if (!err) {
-                                console.log("right " + right.name + "removed");
                                 return res.send(right);
                             } else {
                                 console.log(err);
