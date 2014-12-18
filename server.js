@@ -63,10 +63,11 @@ router.delete('/rights/:id', routes.rights.delete);
 // =============================================================================
 
 router.post('/projects', routes.projects.create);
-router.get('/projects', routes.projects.list);
+router.get('/projects', jwt({secret: secret.secretToken}), routes.projects.list);
 router.get('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.one);
 /*router.delete('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.delete);
 router.put('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.update);*/
+
 
 // ROUTES USERS
 // =============================================================================
