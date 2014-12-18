@@ -18,6 +18,10 @@ var ProjectSchema = new Schema({
         {type: Schema.ObjectId, ref: 'ItemSchema'}
     ],
 
+    comments: [
+        {type: Schema.ObjectId, ref: 'CommentSchema'}
+    ],
+
     created: { type: Date, default: Date.now },
     modified: { type: Date, default: Date.now }
 });
