@@ -34,7 +34,6 @@ exports.update = function(req, res){
             if(users.length > 0) {
                 return res.status(409).send("Ce droit est attribué a des utilisateurs et ne peut être supprimé.");
             } else {*/
-                console.log("Request body update right : " + req.body);
                 var name = req.body.right.name || '';
 
                 if (name == '') {

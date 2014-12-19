@@ -17,7 +17,6 @@ var ProjectSchema = new Schema({
     items: [
         {type: Schema.ObjectId, ref: 'ItemSchema'}
     ],
-
     comments: [
         {type: Schema.ObjectId, ref: 'CommentSchema'}
     ],
