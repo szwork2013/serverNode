@@ -4,12 +4,12 @@ var Schema = mongoose.Schema;
 
 var ProjectSchema = new Schema({
     name: { type: String, required: true, unique: true },
-    duration: { type: Number },
-    begin: { type: Date, required: true },
-    end: { type: Date },
+/*    duration: { type: Number },*/
+    begin: { type: String, required: true },
+    end: { type: String },
 
     resources: [
-        {type: Schema.ObjectId, ref: 'ProjectSchema'}
+        {type: Schema.ObjectId, ref: 'UserSchema'}
     ],
     sprints: [
         {type: Schema.ObjectId, ref: 'SprintSchema'}

@@ -124,7 +124,7 @@ exports.delete = function(req, res){
 
 };
 
-exports.list = function(req, res){
+exports.all = function(req, res){
     Right.find( function(err, rights) {
         if (err)
             res.status(400).send(err);

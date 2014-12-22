@@ -48,24 +48,32 @@ router.get('/', routes.index.index);
 // ROUTES ROLES
 // =============================================================================
 
-router.get('/roles', routes.roles.list);
+router.get('/roles', routes.roles.all);
 router.post('/roles', routes.roles.create);
 
 // ROUTES RIGHTS
 // =============================================================================
 
-router.get('/rights', routes.rights.list);
+router.get('/rights', routes.rights.all);
 router.post('/rights', routes.rights.create);
 router.put('/rights/:id', routes.rights.update);
 router.delete('/rights/:id', routes.rights.delete);
+
+// ROUTES ROLES
+// =============================================================================
+
+router.get('/roles', routes.roles.all);
+router.post('/roles', routes.roles.create);
+router.put('/roles/:id', routes.roles.update);
+router.delete('/roles/:id', routes.roles.delete);
 
 // ROUTES PROJECTS
 // =============================================================================
 
 router.post('/projects', routes.projects.create);
-router.get('/projects', jwt({secret: secret.secretToken}), routes.projects.list);
+router.get('/projects', jwt({secret: secret.secretToken}), routes.projects.all);
 router.get('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.one);
-/*router.delete('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.delete);*/
+router.delete('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.delete);
 router.put('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.update);
 
 
@@ -73,10 +81,16 @@ router.put('/projects/:id', jwt({secret: secret.secretToken}), routes.projects.u
 // =============================================================================
 
 router.post('/users', routes.users.create);
-router.get('/users', jwt({secret: secret.secretToken}), routes.users.list);
+router.post('/users/list', routes.users.list);
+router.get('/users', jwt({secret: secret.secretToken}), routes.users.all);
 router.get('/users/:id', routes.users.one);
 router.delete('/users/:id', routes.users.delete);
 router.put('/users/:id', routes.users.update);
+
+router.get('/users/:id/projects', routes.users.projects);
+
+router.put('/users/:id/roles', routes.users.addRole);
+router.post('/users/:userId/roles/:roleId', routes.users.deleteRole);
 
 router.put('/users/:id/notifications', routes.users.addNotification);
 router.delete('/users/:userId/notifications/:notificationId', routes.users.deleteNotification);

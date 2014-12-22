@@ -2,7 +2,7 @@ var Project = require('../models/project');
 var User = require('../models/user');
 var ObjectId = require('mongoose').Types.ObjectId;
 
-exports.list = function (req, res) {
+exports.all = function (req, res) {
     Project.find(function (err, projects) {
         if (err)
             return res.status(500).send(err);
@@ -25,7 +25,6 @@ exports.one = function (req, res) {
 exports.create = function (req, res) {
 
     var name = req.body.project.name || '';
-    var duration = req.body.project.duration || 0;
     var begin = req.body.project.begin || '';
     var end = req.body.project.end || '';
     var resources = req.body.project.resources;
@@ -36,12 +35,9 @@ exports.create = function (req, res) {
 
     var project = new Project();
     project.name = name;
-    project.duration = duration;
     project.begin = begin;
     project.end = end;
     project.resources = resources;
-
-    console.log(resources[0])
 
     project.save(function (err) {
         if (err) {
@@ -59,14 +55,13 @@ exports.update = function (req, res) {
     console.log("Request body update project : " + req.body);
 
     var name = req.body.project.name || '';
-    var duration = req.body.project.duration || 0;
     var begin = req.body.project.begin || '';
     var end = req.body.project.end || '';
 
     var resources = req.body.project.resources;
-    var sprints = req.body.project.resources;
-    var items = req.body.project.resources;
-    var comments = req.body.project.resources;
+    var sprints = req.body.project.sprints || [];
+    var items = req.body.project.items || [];
+    var comments = req.body.project.comments || [];
 
     if (name == '' || begin == '') {
         return res.send(400);
@@ -82,7 +77,6 @@ exports.update = function (req, res) {
         if (project != null) {
 
             project.name = name;
-            project.duration = duration;
             project.begin = begin;
             project.end = end;
             project.resources = resources;
@@ -115,6 +109,28 @@ exports.update = function (req, res) {
         } else {
             console.log(err);
             return res.status(500).send(err);
+        }
+    });
+};
+
+exports.delete = function(req, res){
+
+    Project.findById(req.params.id, function (err, project) {
+
+        if (err) {
+            console.log(err);
+            return res.send(500).send("Une erreur s'est produite durant la suppression du projet.");
+        }
+
+        if(project != null) {
+            return project.remove(function (err) {
+                if (!err) {
+                    console.log("removed");
+                    return res.status(200).send("Le projet " + project.name + " a bien été supprimé.");
+                } else {
+                    return res.status(500).send("Une erreur s'est produite durant la suppression du projet " + project.name);
+                }
+            });
         }
     });
 };
